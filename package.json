@@ -1,0 +1,21 @@
+{
+  "name": "nodejs-hw-mongodb",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heyylikeduard/nodejs-hw-mongodb.git"
+  },
+  "keywords": [],
+  "author": "Eduard Heyylik <edosheyylik@gmail.com>",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/heyylikeduard/nodejs-hw-mongodb/issues"
+  },
+  "homepage": "https://github.com/heyylikeduard/nodejs-hw-mongodb#readme",
+  "description": ""
+}
