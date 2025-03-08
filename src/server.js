@@ -2,7 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino';
 import dotenv from 'dotenv';
-import { getContacts, getContact } from './controllers/contactsController.js'; // Імпортуємо новий контролер
+import contactsRouter from './routers/contacts.js';
+import { errorHandler } from './middlewares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
 
 dotenv.config();
 
@@ -26,16 +28,14 @@ export function setupServer() {
     next();
   });
 
-  // Роут для отримання всіх контактів
-  app.get('/contacts', getContacts);
-
-  // Роут для отримання контакту за ID
-  app.get('/contacts/:contactId', getContact);
+  // Використання роутів для контактів
+  app.use('/contacts', contactsRouter);
 
   // Обробка неіснуючих роутів
-  app.use((req, res) => {
-    res.status(404).json({ message: 'Not found' });
-  });
+  app.use(notFoundHandler);
+
+  // Обробка помилок
+  app.use(errorHandler);
 
   // Запуск сервера
   app.listen(PORT, () => {

@@ -6,8 +6,4 @@ async function startApp() {
   setupServer(); // Запускаємо сервер
 }
 
-
-// TEST
-
-
 startApp();
