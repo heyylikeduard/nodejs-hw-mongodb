@@ -12,7 +12,6 @@ const contactSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      default: null,
     },
     isFavourite: {
       type: Boolean,
