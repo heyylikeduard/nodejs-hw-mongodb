@@ -12,6 +12,7 @@ const contactSchema = new mongoose.Schema(
     },
     email: {
       type: String,
+      default: null,
     },
     isFavourite: {
       type: Boolean,
@@ -26,6 +27,7 @@ const contactSchema = new mongoose.Schema(
   },
   {
     timestamps: true, // Додає поля createdAt та updatedAt
+    versionKey: false, 
   }
 );
 
