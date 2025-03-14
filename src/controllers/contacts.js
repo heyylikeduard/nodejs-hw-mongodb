@@ -12,12 +12,28 @@ const { NotFound } = httpErrors;
 
 // Отримання всіх контактів
 export const getContacts = async (req, res) => {
-  const contacts = await listContacts();
+  const {
+    page = 1,
+    perPage = 10,
+    sortBy = 'name',
+    sortOrder = 'asc',
+    type = null,
+    isFavourite = null,
+  } = req.query;
+
+  const paginatedContacts = await listContacts(
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+    type,
+    isFavourite
+  );
 
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
-    data: contacts,
+    data: paginatedContacts,
   });
 };
 

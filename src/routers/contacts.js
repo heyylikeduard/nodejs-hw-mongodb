@@ -7,6 +7,9 @@ import {
   deleteContact,
 } from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import { validateBody } from '../middlewares/validateBody.js';
+import { isValidId } from '../middlewares/isValidId.js';
+import { createContactSchema, updateContactSchema } from '../schemas/contacts.js';
 
 const router = express.Router();
 
@@ -14,15 +17,20 @@ const router = express.Router();
 router.get('/', ctrlWrapper(getContacts));
 
 // Роут для отримання контакту за ID
-router.get('/:contactId', ctrlWrapper(getContact));
+router.get('/:contactId', isValidId, ctrlWrapper(getContact));
 
 // Роут для створення нового контакту
-router.post('/', ctrlWrapper(createContact));
+router.post('/', validateBody(createContactSchema), ctrlWrapper(createContact));
 
 // Роут для оновлення контакту за ID
-router.patch('/:contactId', ctrlWrapper(patchContact));
+router.patch(
+  '/:contactId',
+  isValidId,
+  validateBody(updateContactSchema),
+  ctrlWrapper(patchContact)
+);
 
 // Роут для видалення контакту за ID
-router.delete('/:contactId', ctrlWrapper(deleteContact));
+router.delete('/:contactId', isValidId, ctrlWrapper(deleteContact));
 
 export default router;
