@@ -1,5 +1,4 @@
 import httpErrors from 'http-errors';
-import { Types } from 'mongoose';
 import {
   listContacts,
   getContactById,
@@ -21,9 +20,12 @@ export const getContacts = async (req, res) => {
     isFavourite = null,
   } = req.query;
 
+  const pageNumber = parseInt(page, 10);
+  const perPageNumber = parseInt(perPage, 10);
+
   const paginatedContacts = await listContacts(
-    page,
-    perPage,
+    pageNumber,
+    perPageNumber,
     sortBy,
     sortOrder,
     type,
@@ -41,11 +43,6 @@ export const getContacts = async (req, res) => {
 export const getContact = async (req, res) => {
   const { contactId } = req.params;
 
-  // Перевірка, чи є contactId валідним ObjectID
-  if (!Types.ObjectId.isValid(contactId)) {
-    throw new NotFound('Invalid contact ID');
-  }
-
   const contact = await getContactById(contactId);
 
   if (!contact) {
@@ -62,11 +59,6 @@ export const getContact = async (req, res) => {
 // Створення нового контакту
 export const createContact = async (req, res) => {
   const { name, phoneNumber, email, isFavourite, contactType } = req.body;
-
-  // Перевірка обов'язкових полів
-  if (!name || !phoneNumber || !contactType) {
-    throw new httpErrors.BadRequest('Missing required fields');
-  }
 
   const newContact = await addContact({
     name,
@@ -88,11 +80,6 @@ export const patchContact = async (req, res) => {
   const { contactId } = req.params;
   const updateData = req.body;
 
-  // Перевірка, чи є contactId валідним ObjectID
-  if (!Types.ObjectId.isValid(contactId)) {
-    throw new NotFound('Invalid contact ID');
-  }
-
   const updatedContact = await updateContactById(contactId, updateData);
 
   if (!updatedContact) {
@@ -109,11 +96,6 @@ export const patchContact = async (req, res) => {
 // Видалення контакту за ID
 export const deleteContact = async (req, res) => {
   const { contactId } = req.params;
-
-  // Перевірка, чи є contactId валідним ObjectID
-  if (!Types.ObjectId.isValid(contactId)) {
-    throw new NotFound('Invalid contact ID');
-  }
 
   const deletedContact = await removeContactById(contactId);
 
