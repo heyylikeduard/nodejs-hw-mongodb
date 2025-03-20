@@ -10,8 +10,12 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
 import { createContactSchema, updateContactSchema } from '../schemas/contacts.js';
+import { authenticate } from '../middlewares/authenticate.js'; // Підключення middleware
 
 const router = express.Router();
+
+// Застосування middleware authenticate до всіх роутів контактів
+router.use(authenticate);
 
 // Роут для отримання всіх контактів
 router.get('/', ctrlWrapper(getContacts));

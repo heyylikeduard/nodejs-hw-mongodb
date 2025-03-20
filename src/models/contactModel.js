@@ -24,10 +24,15 @@ const contactSchema = new mongoose.Schema(
       required: [true, 'Contact type is required'],
       default: 'personal',
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User', // Посилання на модель User
+      required: true,
+    },
   },
   {
-    timestamps: true, // Додає поля createdAt та updatedAt
-    versionKey: false, 
+    timestamps: true,
+    versionKey: false,
   }
 );
 
