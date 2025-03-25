@@ -3,6 +3,10 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { registerUser, loginUser, refreshSession, logoutUser } from '../controllers/auth.js'; // Додаємо logoutUser
 import { validateBody } from '../middlewares/validateBody.js';
 import { registerUserSchema, loginUserSchema } from '../schemas/auth.js';
+import { sendResetPasswordEmail } from '../controllers/auth.js';
+import { resetPasswordEmailSchema } from '../schemas/auth.js';
+import { resetPassword } from '../controllers/auth.js';
+import { resetPasswordSchema } from '../schemas/auth.js';
 
 const router = express.Router();
 
@@ -25,5 +29,20 @@ router.post('/refresh', ctrlWrapper(refreshSession));
 
 // Роут для логауту
 router.post('/logout', ctrlWrapper(logoutUser));
+
+//роут для емейла
+router.post(
+  '/send-reset-email',
+  validateBody(resetPasswordEmailSchema),
+  ctrlWrapper(sendResetPasswordEmail)
+);
+
+// роут для скидання пароля
+router.post(
+  '/reset-pwd',
+  validateBody(resetPasswordSchema),
+  ctrlWrapper(resetPassword)
+);
+
 
 export default router;
