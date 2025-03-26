@@ -9,6 +9,8 @@ import {
   findSessionByRefreshToken,
   deleteSessionByRefreshToken,
 } from '../services/auth.js';
+import nodemailer from 'nodemailer';
+
 
 // Реєстрація користувача
 export const registerUser = async (req, res) => {
@@ -175,4 +177,97 @@ export const logoutUser = async (req, res) => {
 
   // Відповідь зі статусом 204 (без тіла)
   res.status(204).send();
+};
+
+// емейл
+export const sendResetPasswordEmail = async (req, res) => {
+  const { email } = req.body;
+
+  // 1. Перевірка, чи існує користувач
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
+
+  // 2. Генерація JWT токену (термін дії 5 хвилин)
+  const resetToken = jwt.sign(
+    { email },
+    process.env.JWT_RESET_SECRET,
+    { expiresIn: '5m' }
+  );
+
+  // 3. Формування посилання
+  const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${resetToken}`;
+
+  // 4. Налаштування транспортера Nodemailer (Brevo SMTP)
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: false, // TLS
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASSWORD,
+    },
+  });
+
+  // 5. Відправка email
+  try {
+    await transporter.sendMail({
+      from: `"Your App Name" <${process.env.SMTP_FROM}>`,
+      to: email,
+      subject: 'Password Reset Request',
+      html: `
+        <p>Click the link below to reset your password (expires in 5 minutes):</p>
+        <a href="${resetLink}">Reset Password</a>
+      `,
+    });
+  } catch (error) {
+    throw createHttpError(500, 'Failed to send the email, please try again later.');
+  }
+
+  // 6. Успішна відповідь
+  res.status(200).json({
+    status: 200,
+    message: 'Reset password email has been successfully sent.',
+    data: {},
+  });
+};
+
+// зміна паролю
+export const resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+
+  // 1. Верифікація токену
+  let decoded;
+  try {
+    decoded = jwt.verify(token, process.env.JWT_RESET_SECRET);
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      throw createHttpError(401, 'Token is expired or invalid.');
+    }
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+
+  // 2. Пошук користувача за email з токену
+  const user = await User.findOne({ email: decoded.email });
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
+
+  // 3. Хешування нового пароля
+  const saltRounds = 10;
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+  // 4. Оновлення паролю та видалення сесій
+  await Promise.all([
+    User.updateOne({ _id: user._id }, { password: hashedPassword }),
+    Session.deleteMany({ userId: user._id }), // Видаляємо всі сесії
+  ]);
+
+  // 5. Відповідь
+  res.status(200).json({
+    status: 200,
+    message: 'Password has been successfully reset.',
+    data: {},
+  });
 };
