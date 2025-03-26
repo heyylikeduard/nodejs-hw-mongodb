@@ -12,15 +12,3 @@ export const loginUserSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(6).required(),
 });
-
-
-//схема для емейла
-export const resetPasswordEmailSchema = Joi.object({
-  email: Joi.string().email().required(),
-});
-
-// схема для скидання пароля
-export const resetPasswordSchema = Joi.object({
-  token: Joi.string().required(),
-  password: Joi.string().min(6).required(),
-});

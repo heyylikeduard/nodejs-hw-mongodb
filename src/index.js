@@ -7,6 +7,3 @@ async function startApp() {
 }
 
 startApp();
-
-
-// new branch hw5

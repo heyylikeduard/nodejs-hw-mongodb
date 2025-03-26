@@ -64,42 +64,39 @@ export const getContact = async (req, res) => {
 
 // Створення нового контакту
 export const createContact = async (req, res) => {
-  const { user, file } = req;
-  let photoUrl = null;
-
-  if (file) {
-    photoUrl = await uploadToCloudinary(file.buffer);
-  }
+  const user = req.user; // Отримуємо користувача з запиту
+  const { name, phoneNumber, email, isFavourite, contactType } = req.body;
 
   const newContact = await addContact({
-    ...req.body,
-    userId: user._id,
-    photo: photoUrl,
+    name,
+    phoneNumber,
+    email,
+    isFavourite,
+    contactType,
+    userId: user._id, // Додаємо userId
   });
 
   res.status(201).json({
     status: 201,
-    message: 'Contact created successfully',
+    message: 'Successfully created a contact!',
     data: newContact,
   });
 };
 
 // Оновлення контакту за ID
 export const patchContact = async (req, res) => {
+  const user = req.user; // Отримуємо користувача з запиту
   const { contactId } = req.params;
-  const { user, file } = req;
-  const updateData = { ...req.body };
+  const updateData = req.body;
 
-  if (file) {
-    updateData.photo = await uploadToCloudinary(file.buffer);
+  const updatedContact = await updateContactById(contactId, updateData, user._id); // Передаємо userId
+  if (!updatedContact) {
+    throw new NotFound('Contact not found');
   }
-
-  const updatedContact = await updateContactById(contactId, updateData, user._id);
-  if (!updatedContact) throw new NotFound('Contact not found');
 
   res.status(200).json({
     status: 200,
-    message: 'Contact updated successfully',
+    message: 'Successfully patched a contact!',
     data: updatedContact,
   });
 };

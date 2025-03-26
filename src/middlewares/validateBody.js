@@ -9,7 +9,7 @@ export const validateBody = (schema) => {
       return res.status(400).json({
         status: 400,
         message: 'Validation errors',
-        errors, 
+        errors,
       });
     }
 

@@ -49,5 +49,5 @@ export function setupServer() {
   });
 }
 
-// hw6 init
-// test 2
+// log
+// h6 init commit
