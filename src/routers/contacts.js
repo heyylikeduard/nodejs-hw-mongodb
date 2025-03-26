@@ -3,14 +3,15 @@ import {
   getContacts,
   getContact,
   createContact,
-  patchContact,
+  updateContact,
   deleteContact,
 } from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
 import { createContactSchema, updateContactSchema } from '../schemas/contacts.js';
-import { authenticate } from '../middlewares/authenticate.js'; // Підключення middleware
+import { authenticate } from '../middlewares/authenticate.js';
+import { uploadPhoto } from '../middlewares/upload.js';
 
 const router = express.Router();
 
@@ -24,14 +25,22 @@ router.get('/', ctrlWrapper(getContacts));
 router.get('/:contactId', isValidId, ctrlWrapper(getContact));
 
 // Роут для створення нового контакту
-router.post('/', validateBody(createContactSchema), ctrlWrapper(createContact));
+router.post(
+  '/',
+  authenticate,
+  uploadPhoto,
+  validateBody(createContactSchema),
+  ctrlWrapper(createContact)
+);
 
 // Роут для оновлення контакту за ID
 router.patch(
   '/:contactId',
+  authenticate,
   isValidId,
+  uploadPhoto,
   validateBody(updateContactSchema),
-  ctrlWrapper(patchContact)
+  ctrlWrapper(updateContact)
 );
 
 // Роут для видалення контакту за ID

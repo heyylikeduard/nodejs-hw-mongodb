@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino';
 import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser'; // Додаємо cookie-parser
+import cookieParser from 'cookie-parser'; 
 import contactsRouter from './routers/contacts.js';
 import authRouter from './routers/auth.js';
 import { errorHandler } from './middlewares/errorHandler.js';
@@ -52,3 +52,4 @@ export function setupServer() {
 // log
 // h6 init commit
 // hw6 add email + password reset
+// add photo

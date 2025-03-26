@@ -6,6 +6,10 @@ import {
   updateContactById,
   removeContactById,
 } from '../services/contacts.js';
+import { uploadToCloudinary } from '../utils/cloudinary.js';
+import createHttpError from 'http-errors';
+import { v2 as cloudinary } from 'cloudinary';
+import { Contact } from '../models/contactModel.js';
 
 const { NotFound } = httpErrors;
 
@@ -64,41 +68,83 @@ export const getContact = async (req, res) => {
 
 // Створення нового контакту
 export const createContact = async (req, res) => {
-  const user = req.user; // Отримуємо користувача з запиту
-  const { name, phoneNumber, email, isFavourite, contactType } = req.body;
+  const { file, user, body } = req;
+  let photoUrl = null;
 
-  const newContact = await addContact({
-    name,
-    phoneNumber,
-    email,
-    isFavourite,
-    contactType,
-    userId: user._id, // Додаємо userId
-  });
+  if (file) {
+    try {
+      photoUrl = await uploadToCloudinary(file.path);
+    } catch (error) {
+      console.error('Cloudinary upload error:', error);
+      throw new createHttpError(500, 'Failed to upload photo to Cloudinary');
+    }
+  }
 
-  res.status(201).json({
-    status: 201,
-    message: 'Successfully created a contact!',
-    data: newContact,
-  });
+  try {
+    const newContact = await addContact({
+      ...body,
+      userId: user._id,
+      photo: photoUrl
+    });
+
+    res.status(201).json({
+      status: 201,
+      message: 'Contact created successfully',
+      data: newContact
+    });
+  } catch (error) {
+    console.error('Database error:', error);
+    throw new createHttpError(500, 'Failed to create contact');
+  }
 };
 
 // Оновлення контакту за ID
-export const patchContact = async (req, res) => {
-  const user = req.user; // Отримуємо користувача з запиту
-  const { contactId } = req.params;
-  const updateData = req.body;
+export const updateContact = async (req, res) => {
+  const { file, user, params: { contactId }, body } = req;
+  const updateData = { ...body };
 
-  const updatedContact = await updateContactById(contactId, updateData, user._id); // Передаємо userId
-  if (!updatedContact) {
-    throw new NotFound('Contact not found');
+  try {
+    // Знаходимо старий контакт
+    const oldContact = await Contact.findOne({ _id: contactId, userId: user._id });
+
+    if (!oldContact) {
+      console.log('Contact not found for:', {
+        contactId,
+        userId: user._id
+      });
+      throw new createHttpError(404, 'Contact not found');
+    }
+
+    if (file) {
+      // Завантажуємо нове фото
+      updateData.photo = await uploadToCloudinary(file.path);
+
+      // Видаляємо старе фото з Cloudinary
+      if (oldContact.photo) {
+        const publicId = oldContact.photo.split('/').slice(-2).join('/').split('.')[0];
+        await cloudinary.uploader.destroy(publicId);
+      }
+    }
+
+    // Оновлюємо контакт
+    const updatedContact = await Contact.findOneAndUpdate(
+      { _id: contactId, userId: user._id },
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({
+      status: 200,
+      data: updatedContact
+    });
+
+  } catch (error) {
+    console.error('Update error details:', {
+      error: error.message,
+      stack: error.stack
+    });
+    throw new createHttpError(500, 'Failed to update contact');
   }
-
-  res.status(200).json({
-    status: 200,
-    message: 'Successfully patched a contact!',
-    data: updatedContact,
-  });
 };
 
 // Видалення контакту за ID
