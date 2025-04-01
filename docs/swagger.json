@@ -212,7 +212,7 @@
                   "name": {
                     "type": "string",
                     "description": "Contact's name",
-                    "example": "Eduard Example"
+                    "example": "Eduard Test"
                   },
                   "phoneNumber": {
                     "type": "string",
@@ -313,7 +313,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "65ca67e7ae7f10c88b598384"
+              "example": "67e2bf307fd94c433a4cff2e"
             }
           }
         ],
@@ -336,7 +336,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Successfully found contact with ID 65ca67e7ae7f10c88b598384!"
+                      "example": "Successfully found contact with ID 67e2bf307fd94c433a4cff2e!"
                     },
                     "data": {
                       "type": "object",
@@ -381,7 +381,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "65ca67e7ae7f10c88b598384"
+              "example": "67e2bf307fd94c433a4cff2e"
             }
           }
         ],
@@ -394,12 +394,12 @@
                   "name": {
                     "type": "string",
                     "description": "Contact's name",
-                    "example": "John Doe"
+                    "example": "Eduard Test"
                   },
                   "phoneNumber": {
                     "type": "string",
                     "description": "Contact's phone number",
-                    "example": 380671338855
+                    "example": 380661234567
                   },
                   "email": {
                     "type": "string",
@@ -425,7 +425,7 @@
                     "type": "string",
                     "format": "binary",
                     "description": "Link to contact's photo",
-                    "example": "https://res.cloudinary.com/contacts-cloud/image/upload/v1743158522/cloud_folder/1743158522230_avatar.jpg"
+                    "example": "https://res.cloudinary.com/ddwu8tu5p/image/upload/v1742980217/contacts/ut5w1aohncq2bhvyluoy.jpg"
                   }
                 }
               }
@@ -497,7 +497,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "65ca67e7ae7f10c88b598384"
+              "example": "67e2bf307fd94c433a4cff2e"
             }
           }
         ],
@@ -544,7 +544,7 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "example": "John Doe"
+                    "example": "Eduard Test"
                   },
                   "email": {
                     "type": "string",
@@ -663,7 +663,7 @@
                       "properties": {
                         "accessToken": {
                           "type": "string",
-                          "example": "ksIErcdA0oBwLX79f4bPcYXWKyEX/hcN6OcDU1Ll"
+                          "example": "yGm4sPz6JhL9FwTkQ8xR0Vm1ZlV3+zK7gUt2q5nA"
                         }
                       }
                     }
@@ -710,11 +710,11 @@
                 "properties": {
                   "sessionId": {
                     "type": "string",
-                    "example": "67dd73930820a621863ad82b"
+                    "example": "67e2bf307fd94c433a4cff2e"
                   },
                   "refreshToken": {
                     "type": "string",
-                    "example": "ksIErcdA0oBwLX79f4bPcYXWKyEX/hcN6OcDU1Ll"
+                    "example": "mQ1Jx3pT8zV0cLeR5W9vKf2aD6uZbP7yGkXr4Fh"
                   }
                 }
               }
@@ -751,7 +751,7 @@
                         "accessToken": {
                           "type": "string",
                           "description": "The new access token for the user session",
-                          "example": "ksIErcdA0oBwLX79f4bPcYXWKyEX/hcN6OcDU1Ll"
+                          "example": "xT3wY1E8oJd5AqP7XgB6sFmL0hKr+V2N9lQZr"
                         }
                       }
                     }
@@ -888,11 +888,11 @@
                 "properties": {
                   "token": {
                     "type": "string",
-                    "example": "ksIErcdA0oBwLX79f4bPcYXWKyEX/hcN6OcDU1Ll"
+                    "example": "aV6zGpL1Xw2fTi8Q3k4F7oHr9mD+Yj5bNcZ0s"
                   },
                   "password": {
                     "type": "string",
-                    "example": "newSecurePassword123"
+                    "example": "newPassword123"
                   }
                 }
               }
@@ -1034,11 +1034,11 @@
         "properties": {
           "_id": {
             "type": "string",
-            "example": "66b0ab77141205369a56ed0d"
+            "example": "67e2bf307fd94c433a4cff2e"
           },
           "name": {
             "type": "string",
-            "example": "John Doe"
+            "example": "Eduard Test"
           },
           "email": {
             "type": "string",
@@ -1051,12 +1051,12 @@
           "createdAt": {
             "type": "string",
             "format": "date-time",
-            "example": "2024-08-05T10:37:43.870Z"
+            "example": "2025-04-01T12:12:12.120Z"
           },
           "updatedAt": {
             "type": "string",
             "format": "date-time",
-            "example": "2024-08-05T10:37:43.870Z"
+            "example": "2025-04-01T12:12:12.120Z"
           }
         }
       }
