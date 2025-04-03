@@ -8,18 +8,18 @@ security:
 parameters:
   - name: page
     in: query
-    required: true
     schema:
       type: integer
       minimum: 1
       example: 1
+      default: 1
   - name: perPage
     in: query
-    required: true
     schema:
       type: integer
       minimum: 1
       example: 10
+      default: 10
   - name: sortBy
     in: query
     schema:
@@ -94,8 +94,6 @@ responses:
                 hasPreviousPage:
                   type: boolean
                   example: true
-  '400':
-    $ref: '../../components/responses/400.yaml'
   '401':
     $ref: '../../components/responses/401.yaml'
   '500':

@@ -21,6 +21,7 @@ export const getContacts = async (req, res) => {
     perPage = 10,
     sortBy = 'name',
     sortOrder = 'asc',
+    contactType,
     type = null,
     isFavourite = null,
   } = req.query;
@@ -30,6 +31,7 @@ export const getContacts = async (req, res) => {
 
   // Додаємо фільтр за userId
   const filter = {};
+  if (contactType) filter.contactType = contactType;
   if (type) filter.contactType = type;
   if (isFavourite !== null) filter.isFavourite = isFavourite;
 
@@ -99,51 +101,59 @@ export const createContact = async (req, res) => {
 };
 
 // Оновлення контакту за ID
-export const updateContact = async (req, res) => {
+export const updateContact = async (req, res, next) => {
   const { file, user, params: { contactId }, body } = req;
   const updateData = { ...body };
 
   try {
-    // Знаходимо старий контакт
-    const oldContact = await Contact.findOne({ _id: contactId, userId: user._id });
+    // Спроба оновити контакт через сервіс
+    const updatedContact = await updateContactById(
+      contactId,
+      { ...updateData, userId: user._id },
+      user._id
+    );
 
-    if (!oldContact) {
-      console.log('Contact not found for:', {
-        contactId,
-        userId: user._id
-      });
-      throw new createHttpError(404, 'Contact not found');
-    }
-
+    // Обробка фото, якщо воно є у запиті
     if (file) {
-      // Завантажуємо нове фото
-      updateData.photo = await uploadToCloudinary(file.path);
+      try {
+        // Завантаження нового фото
+        const newPhotoUrl = await uploadToCloudinary(file.path);
+        updateData.photo = newPhotoUrl;
 
-      // Видаляємо старе фото з Cloudinary
-      if (oldContact.photo) {
-        const publicId = oldContact.photo.split('/').slice(-2).join('/').split('.')[0];
-        await cloudinary.uploader.destroy(publicId);
+        // Видалення старого фото з Cloudinary
+        if (updatedContact.photo) {
+          const publicId = updatedContact.photo
+            .split('/')
+            .slice(-2)
+            .join('/')
+            .split('.')[0];
+          await cloudinary.uploader.destroy(publicId);
+        }
+
+        // Оновлення фото у контакті
+        updatedContact.photo = newPhotoUrl;
+        await updatedContact.save();
+      } catch (error) {
+        console.error('Cloudinary error:', error);
+        throw new createHttpError(500, 'Failed to process image');
       }
     }
 
-    // Оновлюємо контакт
-    const updatedContact = await Contact.findOneAndUpdate(
-      { _id: contactId, userId: user._id },
-      updateData,
-      { new: true, runValidators: true }
-    );
-
     res.status(200).json({
       status: 200,
+      message: 'Successfully updated contact!',
       data: updatedContact
     });
 
   } catch (error) {
-    console.error('Update error details:', {
-      error: error.message,
-      stack: error.stack
-    });
-    throw new createHttpError(500, 'Failed to update contact');
+    // Спеціальна обробка помилки "Contact not found"
+    if (error.message === 'Contact not found') {
+      return next(createHttpError(404, error.message));
+    }
+
+    // Інші помилки
+    console.error('Update error:', error);
+    next(error);
   }
 };
 

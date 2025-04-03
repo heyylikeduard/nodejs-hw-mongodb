@@ -4,6 +4,7 @@ required:
   - phoneNumber
   - contactType
   - userId
+  - _id
 properties:
   _id:
     description: Contact's ID

@@ -57,6 +57,11 @@ export const updateContactById = async (contactId, updateData, userId) => {
       runValidators: true,
     }
   );
+
+  if (!updatedContact) {
+    throw new Error("Contact not found");
+  }
+
   return updatedContact;
 };
 

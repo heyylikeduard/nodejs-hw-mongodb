@@ -45,21 +45,21 @@
           {
             "name": "page",
             "in": "query",
-            "required": true,
             "schema": {
               "type": "integer",
               "minimum": 1,
-              "example": 1
+              "example": 1,
+              "default": 1
             }
           },
           {
             "name": "perPage",
             "in": "query",
-            "required": true,
             "schema": {
               "type": "integer",
               "minimum": 1,
-              "example": 10
+              "example": 10,
+              "default": 10
             }
           },
           {
@@ -174,9 +174,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
           },
           "401": {
             "$ref": "#/components/responses/401"
@@ -962,7 +959,8 @@
           "name",
           "phoneNumber",
           "contactType",
-          "userId"
+          "userId",
+          "_id"
         ],
         "properties": {
           "_id": {
@@ -1029,7 +1027,8 @@
         "required": [
           "name",
           "email",
-          "password"
+          "password",
+          "_id"
         ],
         "properties": {
           "_id": {
