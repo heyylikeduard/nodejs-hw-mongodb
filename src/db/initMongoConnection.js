@@ -13,6 +13,6 @@ export async function initMongoConnection() {
     console.log('Mongo connection successfully established!');
   } catch (error) {
     console.error('Error connecting to MongoDB:', error.message);
-    process.exit(1); // Завершити процес у разі помилки підключення
+    process.exit(1);
   }
 }
